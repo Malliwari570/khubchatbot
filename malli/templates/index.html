@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Chatbot</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      height: 100vh;
+      background: linear-gradient(to right, #e6e6fa, #8a2be2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .chat-container {
+      width: 350px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 500px;
+    }
+
+    .chat-box {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background: transparent;
+    }
+
+    .chat-message {
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 15px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      word-wrap: break-word;
+    }
+
+    .bot {
+      background: white;
+      color: black;
+      align-self: flex-start;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .user {
+      background: #8a2be2;
+      color: white;
+      align-self: flex-end;
+    }
+
+    .chat-input-area {
+      display: flex;
+      align-items: center;
+      padding: 10px 15px;
+      background: white;
+      border-top: 1px solid #ddd;
+    }
+
+    .chat-input-area input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
+
+    .chat-input-area button {
+      background: #8a2be2;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 10px 15px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+
+    .chat-input-area button:hover {
+      background: #7325ba;
+    }
+  </style>
+</head>
+<body>
+
+<div class="chat-container">
+  <div class="chat-box" id="chatBox">
+    <div class="chat-message bot">
+      Hello! I'm SmartBot. Ask me anything. 😊
+    </div>
+  </div>
+  <div class="chat-input-area">
+    <input type="text" id="userInput" placeholder="Type your message..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<script>
+  function sendMessage() {
+    const input = document.getElementById("userInput");
+    const message = input.value.trim();
+    if (!message) return;
+
+    appendMessage("user", message);
+    input.value = "";
+
+    fetch("/get", {
+      method: "POST",
+      body: JSON.stringify({ message: message }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      appendMessage("bot", data.reply);
+    });
+  }
+
+  function appendMessage(sender, text) {
+    const chatBox = document.getElementById("chatBox");
+    const msgDiv = document.createElement("div");
+    msgDiv.className = `chat-message ${sender}`;
+    msgDiv.textContent = text;
+    chatBox.appendChild(msgDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+</script>
+
+</body>
+</html>
+ 
+
